@@ -7,9 +7,9 @@ namespace FrailynGarcia_AP1_P2.DAL
     {
         public Contexto(DbContextOptions<Contexto> options) : base(options) { }
 
-        public DbSet<Registros> Registros { get; set; }
+        public DbSet<Combos> Combos { get; set; }
 
-        public DbSet<RegistrosDetalle> RegistrosDetalle { get; set; }
+        public DbSet<CombosDetalle> CombosDetalle { get; set; }
 
         public DbSet<Articulos> Articulos { get; set; }
 

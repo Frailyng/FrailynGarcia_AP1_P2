@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace FrailynGarcia_AP1_P2.Models
 {
-    public class RegistrosDetalle
+    public class CombosDetalle
     {
         [Key]
         public int DetalleId { get; set; }

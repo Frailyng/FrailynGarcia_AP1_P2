@@ -17,7 +17,7 @@ public class RegistroService(IDbContextFactory<Contexto> DbFactory)
         return true;
     }
 
-    public async Task AfectarRegistros(RegistrosDetalle[] detalle)
+    public async Task AfectarRegistros(CombosDetalle[] detalle)
     {
 
     }
