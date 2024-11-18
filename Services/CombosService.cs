@@ -26,7 +26,7 @@ public class CombosService(IDbContextFactory<Contexto> DbFactory)
         await using var contexto = await DbFactory.CreateDbContextAsync();
         foreach (var item in detalle)
         {
-            var articulo = await contexto.Articulos.SingleAsync(t => t.ArticuloId == item.ArticuloId);
+            var articulo = await contexto.ArticulosPC.SingleAsync(t => t.ArticuloId == item.ArticuloId);
         }
     }
 

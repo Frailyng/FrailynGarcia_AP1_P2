@@ -15,7 +15,7 @@ namespace FrailynGarcia_AP1_P2.Models
 
         public double Precio { get; set; }
 
-        public bool Vendido { get; set; }
+        public bool Vendido { get; set; } = false;
 
         public ICollection<CombosDetalle> CombosDetalle { get; set; } = new List<CombosDetalle>();
     }
