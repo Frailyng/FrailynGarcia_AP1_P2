@@ -8,9 +8,15 @@ namespace FrailynGarcia_AP1_P2.Models
         [Key]
         public int DetalleId { get; set; }
 
-        public int RegistroId { get; set; }
+        public int ComboId { get; set; }
 
-        [ForeignKey("RegistroId")]
-        public virtual Registros Registros { get; set; } = null!;
+        public int ArticuloId { get; set; }
+
+        public int Cantidad {  get; set; }
+
+        public double Costo { get; set; }
+
+        [ForeignKey("ComboId")]
+        public virtual Combos Combos { get; set; } = null!;
     }
 }
