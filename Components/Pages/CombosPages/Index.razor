@@ -1,5 +1,121 @@
-﻿@page "/Registro/Index"
+﻿@page "/Combos/Index"
+@inject CombosService CombosService
+
+<PageTitle>Index</PageTitle>
+<EditForm Model="ListaCombos" class="border shadow-lg p-4 rounded bg-light">
+
+    <div class="container">
+        <div class="card-header bg-lightgreen text-dark py-3 rounded text-center position-relative">
+            <h3 class="mb-0 font-weight-bold">Consulta de Combos</h3>
+            <a href="/Combos/Create" class="btn btn-success btn-sm position-absolute" style="top: 50px; right: 0;">
+                <span class="bi bi-plus-circle"></span> Crear
+            </a>
+        </div>
+
+
+        <div class="card-body">
+            @*labels*@
+            <div class="row">
+
+                @*Filtrar por*@
+                <div class="col-3">
+                    <label class="col-form-label"><strong>Filtrar por</strong></label>
+                </div>
+
+                @*ValorFiltro*@
+                <div class="col-4">
+                    <label class="col-form-label"><strong>B&uacute;squeda</strong></label>
+                </div>
+
+            </div>
+
+            @*Inputs y botones*@
+            <div class="row align-items-center">
+                @*filtro*@
+                <div class="col-3">
+                    <InputSelect class="form-select" @bind-Value="Filtro">
+                        <option value="" selected disabled>Elija una opci&oacute;n</option>
+                        <option value="ComboId">ComboId</option>
+                    </InputSelect>
+                </div>
+
+                @*Busqueda*@
+                <div class="col-4">
+                    <div class="input-group">
+                        <input class="form-control" @bind="ValorFiltro" placeholder="Buscar" />
+                        <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
+                    </div>
+                </div>
+
+                @*FiltroFecha*@
+                <div class="row mt-3">
+
+                </div>
+            </div>
+            <table class="table table-bordered text-center shadow-sm rounded">
+                <thead class="bg-darkgreen text-white">
+                    <tr>
+                        <th>ComboId</th>
+                        <th>Fecha</th>
+                        <th>Descripcion</th>
+                        <th>Precio</th>
+                        <th>Vendido</th>
+                        <th>Editar</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var combos in ListaCombos)
+                    {
+                        <tr>
+                            <td>@combos.ComboId</td>
+                            <td>@combos.Fecha.ToShortDateString()</td>
+                            <td>@combos.Descripcion</td>
+                            <td>@combos.Precio</td>
+                            <td>@combos.Vendido</td>
+                            <td>
+                                <a class="btn btn-outline-success" href="/Combos/Edit/@combos.ComboId">
+                                    <span class="bi bi-pencil-fill"></span>
+                                </a>
+                            </td>
+                            <td>
+                                <a class="btn btn-outline-danger" href="/Combos/Delete/@combos.ComboId">
+                                    <span class="bi bi-trash-fill"></span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card-footer space-between">
+            <label>Cantidad:  @ListaCombos.Count()</label>
+        </div>
+    </div>
+</EditForm>
 
 @code {
+    public List<Combos> ListaCombos = new List<Combos>();
 
+    private string Filtro = "Id";
+    private string ValorFiltro = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaCombos = await CombosService.Listar(c => c.ComboId > 0);
+        await Buscar();
+    }
+    private async Task Buscar()
+    {
+
+        if (ValorFiltro.Trim() != "" && Filtro == "ComboId")
+        {
+            if (int.TryParse(ValorFiltro, out int comboId))
+            {
+                ListaCombos = await CombosService
+                    .Listar(p => p.ComboId == comboId);
+            }
+        }
+    }
 }
