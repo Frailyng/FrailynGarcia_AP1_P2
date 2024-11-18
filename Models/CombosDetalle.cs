@@ -16,6 +16,10 @@ namespace FrailynGarcia_AP1_P2.Models
 
         public double Costo { get; set; }
 
+        public double Precio { get; set; }
+
+        public double Monto { get; set; }
+
         [ForeignKey("ComboId")]
         public virtual Combos Combos { get; set; } = null!;
     }

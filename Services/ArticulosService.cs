@@ -11,9 +11,30 @@ namespace FrailynGarcia_AP1_P2.Services
         {
             await using var contexto = await DbFactory.CreateDbContextAsync();
             return await contexto.ArticulosPC
-                .AsNoTracking()
                 .Where(criterio)
+                .AsNoTracking()
                 .ToListAsync();
+        }
+
+        public async Task<ArticulosPC> BuscarPorId(int articuloId)
+        {
+            await using var contexto = await DbFactory.CreateDbContextAsync();
+            return await contexto.ArticulosPC.FirstOrDefaultAsync(a => a.ArticuloId == articuloId);
+        }
+
+        public async Task<bool> Actualizar(ArticulosPC articulo)
+        {
+            await using var contexto = await DbFactory.CreateDbContextAsync();
+            try
+            {
+                contexto.ArticulosPC.Update(articulo);
+                await contexto.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
     }
