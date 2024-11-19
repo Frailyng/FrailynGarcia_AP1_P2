@@ -110,22 +110,23 @@
     }
 
 
-    private async Task HandleArticuloSelected((ArticulosPCs articulos, int cantidad, double precio) selection)
-    {
-        double precioTotal = selection.cantidad * selection.articulos.Precio;
+       private async Task HandleArticuloSelected((ArticulosPCs articulos, int cantidad, double precio) selection)
+        {
+            double precioTotal = selection.cantidad * selection.articulos.Precio;
 
-        var detalle = new CombosDetalle
-            {
-                ArticuloId = selection.articulos.ArticuloId,
-                Cantidad = selection.cantidad,
-                Precio = precioTotal
-            };
+            var detalle = new CombosDetalle
+                {
+                    ArticuloId = selection.articulos.ArticuloId,
+                    Cantidad = selection.cantidad,
+                    Precio = precioTotal
+                };
 
-        Combo.CombosDetalle.Add(detalle);
+            Combo.CombosDetalle.Add(detalle);
 
-        DetalleSeleccionado = new CombosDetalle();
-        await Task.CompletedTask;
-    }
+            DetalleSeleccionado = new CombosDetalle();
+            await Task.CompletedTask;
+        }
+
     public double MontoTotal => Combo.CombosDetalle.Sum(d => d.Precio);
 
     public async Task Guardar()
