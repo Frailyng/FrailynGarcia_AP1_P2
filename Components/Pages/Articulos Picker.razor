@@ -26,10 +26,10 @@
 
 @code {
     [Parameter]
-    public List<ArticulosPC> Articulos { get; set; } = [];
+    public List<ArticulosPCs> Articulos { get; set; } = [];
 
     [Parameter]
-    public EventCallback<(ArticulosPC Articulo, int Quantity, double Quantitys)> OnArticuloSelected { get; set; }
+    public EventCallback<(ArticulosPCs Articulo, int Quantity, double Quantitys)> OnArticuloSelected { get; set; }
 
     [Parameter]
     public int ArticuloId { get; set; }

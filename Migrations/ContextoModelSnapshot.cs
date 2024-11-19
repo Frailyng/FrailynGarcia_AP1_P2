@@ -22,7 +22,7 @@ namespace FrailynGarcia_AP1_P2.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("FrailynGarcia_AP1_P2.Models.ArticulosPC", b =>
+            modelBuilder.Entity("FrailynGarcia_AP1_P2.Models.ArticulosPCs", b =>
                 {
                     b.Property<int>("ArticuloId")
                         .ValueGeneratedOnAdd()
@@ -134,6 +134,12 @@ namespace FrailynGarcia_AP1_P2.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("Costo")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Monto")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Precio")
                         .HasColumnType("float");
 
                     b.HasKey("DetalleId");

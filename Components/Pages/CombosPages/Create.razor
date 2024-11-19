@@ -97,7 +97,7 @@
 @code {
     private Combos Combo = new Combos();
     public CombosDetalle DetalleSeleccionado { get; set; } = new();
-    public List<ArticulosPC> ListaArticulos { get; set; } = new();
+    public List<ArticulosPCs> ListaArticulos { get; set; } = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -110,7 +110,7 @@
     }
 
 
-    private async Task HandleArticuloSelected((ArticulosPC articulos, int cantidad, double precio) selection)
+    private async Task HandleArticuloSelected((ArticulosPCs articulos, int cantidad, double precio) selection)
     {
         double precioTotal = selection.cantidad * selection.articulos.Precio;
 

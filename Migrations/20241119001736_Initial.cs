@@ -54,7 +54,9 @@ namespace FrailynGarcia_AP1_P2.Migrations
                     ComboId = table.Column<int>(type: "int", nullable: false),
                     ArticuloId = table.Column<int>(type: "int", nullable: false),
                     Cantidad = table.Column<int>(type: "int", nullable: false),
-                    Costo = table.Column<double>(type: "float", nullable: false)
+                    Costo = table.Column<double>(type: "float", nullable: false),
+                    Precio = table.Column<double>(type: "float", nullable: false),
+                    Monto = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
