@@ -12,7 +12,6 @@
             </a>
         </div>
 
-
         <div class="card-body">
             @*labels*@
             <div class="row">
@@ -46,20 +45,15 @@
                         <button type="button" class="btn btn-outline-primary bi bi-search" @onclick="Buscar"></button>
                     </div>
                 </div>
-
-                @*FiltroFecha*@
-                <div class="row mt-3">
-
-                </div>
             </div>
             <table class="table table-bordered text-center shadow-sm rounded">
                 <thead class="bg-darkgreen text-dark">
                     <tr>
-                        <th>ComboId</th>
+                        <th>CotizacionId</th>
                         <th>Fecha</th>
-                        <th>Descripcion</th>
-                        <th>Precio</th>
-                        <th>Vendido</th>
+                        <th>Nombre del Cliente</th>
+                        <th>Observacion</th>
+                        <th>Monto</th>
                         <th>Editar</th>
                         <th>Eliminar</th>
                     </tr>
@@ -71,8 +65,8 @@
                             <td>@combos.ComboId</td>
                             <td>@combos.Fecha.ToShortDateString()</td>
                             <td>@combos.Descripcion</td>
-                            <td>@combos.Precio</td>
-                            <td>@combos.Vendido</td>
+                            <td>@($"${combos.Precio:N2}")</td>
+                            <td>@(combos.Vendido ? "Vendido" : "No vendido")</td>
                             <td>
                                 <a class="btn btn-outline-success" href="/Combo/Edit/@combos.ComboId">
                                     <span class="bi bi-pencil-fill"></span>
@@ -108,7 +102,6 @@
     }
     private async Task Buscar()
     {
-
         if (ValorFiltro.Trim() != "" && Filtro == "ComboId")
         {
             if (int.TryParse(ValorFiltro, out int comboId))
@@ -118,4 +111,5 @@
             }
         }
     }
+   
 }

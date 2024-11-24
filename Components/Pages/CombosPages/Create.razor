@@ -5,6 +5,7 @@
 @rendermode InteractiveServer
 
 <PageTitle>Create</PageTitle>
+
 <EditForm Model="Combo" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
 
@@ -15,6 +16,15 @@
             </div>
 
             <div class="card-body">
+                <!-- Notification Success (Local, arriba) -->
+                @if (GuardarExitoso)
+                {
+                    <div class="alert alert-success alert-dismissible fade show mb-3" role="alert">
+                        <strong>¡Combo guardado correctamente!</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+
                 <!-- ComboId -->
                 <div class="mb-3">
                     <label for="ComboId" class="form-label">Combo ID:</label>
@@ -35,7 +45,14 @@
                     <ValidationMessage For="@(() => Combo.Descripcion)" />
                 </div>
 
-                  @* Detalles de los combos *@
+                <!-- Checkbox Vendido -->
+                <div class="mb-3">
+                    <label for="Vendido" class="form-label"><strong>Vendido</strong></label>
+                    <InputCheckbox @bind-Value="Combo.Vendido" class="form-check-input" />
+                    <ValidationMessage For="@(() => Combo.Vendido)" />
+                </div>
+
+                <!-- Detalles de los combos -->
                 <div class="border border-success p-3 mt-3">
                     <h5>Detalles de Articulos Utilizados</h5>
 
@@ -45,22 +62,24 @@
                                      Precio="DetalleSeleccionado.Precio"
                                      OnArticuloSelected="HandleArticuloSelected" />
                     <hr />
-                     <table class="table table-light">
+                    <table class="table table-light">
                         <thead class="table table-striped">
-                            <tr class="Text-center">
-                                <td>Articulo</td>
-                                <td>Cantidad</td>
-                                <td>Precio Total</td>
-                                <td>Remover</td>
+                            <tr class="text-center">
+                                <th>Articulo</th>
+                                <th>Descripción</th>
+                                <th>Cantidad</th>
+                                <th>Precio Total</th>
+                                <th>Remover</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var combo in Combo.CombosDetalle)
                             {
-                                <tr>
+                                <tr class="text-center">
                                     <td>@combo.ArticuloId</td>
+                                    <td>@GetArticuloDescripcion(combo.ArticuloId)</td>
                                     <td>@combo.Cantidad</td>
-                                    <td>@combo.Precio</td>
+                                    <td>@($"${combo.Precio:N2}")</td>
                                     <td>
                                         <button type="button" class="btn btn-outline-danger bi bi-trash"
                                                 @onclick="() => RemoverDetalle(combo)"></button>
@@ -72,19 +91,19 @@
                     <hr />
                 </div>
 
-                @* Monto Total *@
+                <!-- Monto Total -->
                 <div class="row">
                     <div class="col-6 offset-6">
                         <div class="mb-3">
                             <label class="form-label"><strong>Monto Total a Pagar</strong></label>
-                            <label class="form-control text-end"><strong>@MontoTotal</strong></label>
+                            <label class="form-control text-end"><strong>@($"${MontoTotal:N2}")</strong></label>
                             <ValidationMessage For="(() => Combo.Precio)" />
                         </div>
                     </div>
                 </div>
             </div>
 
-            @* footer *@
+            <!-- Footer -->
             <div class="card-footer text-center mt-2">
                 <a href="/Combo/Index" class="btn btn-secondary"> <span class="bi bi-arrow-left"></span> Volver</a>
                 <button type="submit" class="btn btn-primary bi bi-floppy"> Guardar</button>
@@ -93,39 +112,46 @@
     </div>
 </EditForm>
 
-
 @code {
     private Combos Combo = new Combos();
     public CombosDetalle DetalleSeleccionado { get; set; } = new();
     public List<ArticulosPCs> ListaArticulos { get; set; } = new();
+    private bool GuardarExitoso { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
-
         Combo.Fecha = DateTime.Today;
-
         Combo.CombosDetalle = new List<CombosDetalle>();
         ListaArticulos = await ArticulosService.Listar(a => true);
-
     }
 
-
-       private async Task HandleArticuloSelected((ArticulosPCs articulos, int cantidad, double precio) selection)
+    private async Task HandleArticuloSelected((ArticulosPCs articulos, int cantidad, double precio) selection)
+    {
+        if (Combo.CombosDetalle.Any(d => d.ArticuloId == selection.articulos.ArticuloId))
         {
-            double precioTotal = selection.cantidad * selection.articulos.Precio;
-
-            var detalle = new CombosDetalle
-                {
-                    ArticuloId = selection.articulos.ArticuloId,
-                    Cantidad = selection.cantidad,
-                    Precio = precioTotal
-                };
-
-            Combo.CombosDetalle.Add(detalle);
-
-            DetalleSeleccionado = new CombosDetalle();
-            await Task.CompletedTask;
+            return;
         }
+
+        double precioTotal = selection.cantidad * selection.articulos.Precio;
+
+        var detalle = new CombosDetalle
+            {
+                ArticuloId = selection.articulos.ArticuloId,
+                Cantidad = selection.cantidad,
+                Precio = precioTotal
+            };
+
+        Combo.CombosDetalle.Add(detalle);
+
+        DetalleSeleccionado = new CombosDetalle();
+        await Task.CompletedTask;
+    }
+
+    private string GetArticuloDescripcion(int articuloId)
+    {
+        var articulo = ListaArticulos.FirstOrDefault(a => a.ArticuloId == articuloId);
+        return articulo?.Descripcion ?? "Descripción no disponible";
+    }
 
     public double MontoTotal => Combo.CombosDetalle.Sum(d => d.Precio);
 
@@ -136,6 +162,7 @@
 
         if (guardo)
         {
+            // Actualizar existencias de los artículos
             foreach (var detalle in Combo.CombosDetalle)
             {
                 var articulo = await ArticulosService.BuscarPorId(detalle.ArticuloId);
@@ -151,7 +178,22 @@
                     await ArticulosService.Actualizar(articulo);
                 }
             }
-            navigationManager.NavigateTo("/Combo/Index");
+
+            GuardarExitoso = true; // Mostrar la notificación de éxito
+
+            // Forzar la actualización de la página para que se renderice la notificación
+            StateHasChanged();
+
+            // Esperar unos segundos antes de redirigir
+            await Task.Delay(3000);
+
+            navigationManager.NavigateTo("/Combo/Index"); // Redirigir a la página de index
+        }
+        else
+        {
+            // Si el guardado falla, puedes manejar este caso si lo deseas
+            GuardarExitoso = false;
+            StateHasChanged();
         }
     }
 
@@ -161,3 +203,6 @@
         DetalleSeleccionado = detalle;
     }
 }
+
+
+

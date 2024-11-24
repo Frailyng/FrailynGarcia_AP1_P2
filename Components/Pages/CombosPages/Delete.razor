@@ -7,6 +7,15 @@
 
 <PageTitle>Eliminar Combo</PageTitle>
 
+<!-- Notificación de éxito de eliminación -->
+@if (EliminarExitoso)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <strong>¡Combo eliminado correctamente!</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 @if (Combo != null)
 {
     <div class="container">
@@ -24,7 +33,7 @@
                     <div class="col-md-6">
                         <div class="card shadow-lg">
                             <div class="card-header">
-                                <h3 class="text-center"><strong>Datos de los Combos</strong></h3>
+                                <h3 class="text-center"><strong>Datos del Combo</strong></h3>
                             </div>
                             <div class="card-body">
                                 <div class="border-primary border-2 borde">
@@ -35,8 +44,8 @@
                                                     <li><strong>ComboId:</strong> @Combo.ComboId</li>
                                                     <li><strong>Fecha:</strong> @Combo.Fecha.ToShortDateString()</li>
                                                     <li><strong>Descripcion:</strong> @Combo.Descripcion</li>
-                                                    <li><strong>Monto:</strong> @Combo.Precio</li>
-                                                    <li><strong>Vendido:</strong> @Combo.Vendido</li>
+                                                    <li><strong>Monto:</strong> @($"${Combo.Precio:N2}")</li>
+                                                    <li><strong>Vendido:</strong> @(Combo.Vendido ? "Vendido" : "No Vendido")</li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -47,15 +56,34 @@
                     </div>
                 </div>
             </div>
-            <!-- Footer -->
-            <div class="card-footer d-flex justify-content-between">
-                <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">
-                    <i class="bi bi-trash-fill"></i> Eliminar
-                </button>
-                <a class="btn btn-outline-primary" href="/Combo/Index">
-                    <i class="bi bi-box-arrow-left"></i> Volver
-                </a>
-            </div>
+
+            <!-- Mostrar mensaje de bloqueo si el combo está vendido -->
+            @if (Combo.Vendido)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <strong>Este combo ya ha sido vendido.</strong> No se puede eliminar.
+                </div>
+                <div class="card-footer d-flex justify-content-between">
+                    <button class="btn btn-outline-danger" disabled>
+                        <i class="bi bi-trash-fill"></i> Eliminar
+                    </button>
+                    <a class="btn btn-outline-primary" href="/Combo/Index">
+                        <i class="bi bi-box-arrow-left"></i> Volver
+                    </a>
+                </div>
+            }
+            else
+            {
+                <!-- Footer -->
+                <div class="card-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-danger" @onclick="Eliminar">
+                        <i class="bi bi-trash-fill"></i> Eliminar
+                    </button>
+                    <a class="btn btn-outline-primary" href="/Combo/Index">
+                        <i class="bi bi-box-arrow-left"></i> Volver
+                    </a>
+                </div>
+            }
         </div>
     </div>
 }
@@ -68,6 +96,7 @@ else
     [Parameter]
     public int ComboId { get; set; }
     public Combos? Combo { get; set; }
+    private bool EliminarExitoso { get; set; } = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -86,9 +115,9 @@ else
 
         if (await CombosService.Eliminar(ComboId))
         {
+            EliminarExitoso = true;
+            await Task.Delay(3000); // Esperar 3 segundos para que el usuario vea la notificación
             navigationManager.NavigateTo("/Combo/Index");
         }
     }
-
 }
-
